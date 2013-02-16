@@ -27,6 +27,13 @@ Additionally, solrconfig.xml must include the modified processor chain as descri
 
 The file agents.properties must be in the Solr root directory from which Solr is booted. If Solr throws a FileNotFound exception, it is likely because it cannot find this file.
 
+## Important Note ##
+agents.properties includes a port assignment.
+
+**That port assignment might need to be *changed* depending on the installation.**
+
+**Please note that the port is used by all SolrAgentCoordinator installations.**
+
 ## ToDo ##
 Mavenize the project<br/>
 Create a full unit test suite
