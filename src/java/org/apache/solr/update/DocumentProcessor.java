@@ -19,9 +19,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import net.sf.json.JSONObject;
 
@@ -35,12 +33,15 @@ import org.apache.solr.update.processor.UpdateRequestProcessor;
  */
 public class DocumentProcessor extends UpdateRequestProcessor {
 	private int thePort = 0;
+	private boolean isRunning = true;
+	private Worker thread;
 	/**
 	 * @param next
 	 */
 	public DocumentProcessor(UpdateRequestProcessor next, int port) {
 		super(next);
 		thePort = port;
+		thread = new Worker();
 	}
 	
 	/**
@@ -62,10 +63,13 @@ public class DocumentProcessor extends UpdateRequestProcessor {
 		System.out.println("JSON "+json);
 		serveData(json);
 	}
+	
+	
 	public void processAdd(AddUpdateCommand cmd) throws IOException {
 //		System.out.println("INTERCEPTOR.ADD "+cmd);
 		SolrInputDocument doc = cmd.getSolrInputDocument();
-		acceptDocument(doc);
+		//acceptDocument(doc);
+		thread.addDocument(doc);
 	}
 	
 	/**
@@ -90,6 +94,9 @@ public class DocumentProcessor extends UpdateRequestProcessor {
 		return result;
 	}
 	
+	protected void finalize() throws Exception {
+		thread.halt();
+	}
 	/**
 	 * Send the data
 	 * @param data
@@ -112,5 +119,46 @@ public class DocumentProcessor extends UpdateRequestProcessor {
 	        e.printStackTrace();
 	        //TODO figure out how to get this into Solr's logging system
 	    }
+	}
+	
+	class Worker extends Thread {
+		private List<SolrInputDocument>documents;
+
+		Worker() {
+			documents = new ArrayList<SolrInputDocument>();
+			this.start();
+		}
+		
+		public void halt() {
+			synchronized(documents) {
+				isRunning = false;
+				documents.notify();
+			}
+		}
+		public void addDocument(SolrInputDocument doc) {
+			synchronized(documents) {
+				documents.add(doc);
+				documents.notify();
+			}
+		}
+		public void run() {
+			SolrInputDocument theDoc = null;
+			while (isRunning) {
+				synchronized(documents) {
+					if (documents.isEmpty()) {
+						try {
+							documents.wait();
+						} catch (Exception e) {}
+					}
+					if (isRunning && !documents.isEmpty()) {
+						theDoc = documents.remove(0);
+					}
+				}
+				if (isRunning && theDoc != null) {
+					acceptDocument(theDoc);
+					theDoc = null;
+				}
+			}
+		}
 	}
 }

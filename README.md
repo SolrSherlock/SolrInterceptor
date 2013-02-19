@@ -1,6 +1,6 @@
 # SolrInterceptor #
 Status: *pre-alpha*<br/>
-Latest edit: 20130215
+Latest edit: 20130218
 ## Background ##
 SolrInterceptor exists inside Solr's update request process chain, in solrconfig.xml,  as illustrated:
 
@@ -34,8 +34,13 @@ agents.properties includes a port assignment.
 
 **Please note that the port is used by all SolrAgentCoordinator installations.**
 
+## CHANGE HISTORY ##
+20130218
+	Dropped creating a new DocumentProcessor object since we do not care what changed; we are using it for external, not internal purposes.  Changed DocumentProcessor to threaded. Results in improved performance, and no blocking of Solr if the listener drops off.
+
 ## ToDo ##
-Mavenize the project<br/>
+Mavenize Project
+
 Create a full unit test suite
 
 ## License ##

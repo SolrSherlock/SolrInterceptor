@@ -34,6 +34,7 @@ import org.apache.solr.update.processor.UpdateRequestProcessorFactory;
 public class TopicQuestsDocumentProcessFactory extends
 		UpdateRequestProcessorFactory {
 	private int myPort = 0;
+	private DocumentProcessor processor;
 	
 	/**
 	 * Called when the code in solrconfig.xml wants to send in some
@@ -63,9 +64,9 @@ public class TopicQuestsDocumentProcessFactory extends
 	@Override
 	public UpdateRequestProcessor getInstance(SolrQueryRequest req,
 			SolrQueryResponse resp, UpdateRequestProcessor next) {
-		//Seems to require a new processor since next changes
-		//TODO try testing against a fixed processor
-		return new DocumentProcessor(next,myPort);
+		if (processor == null)
+			processor = new DocumentProcessor(next,myPort);
+		return processor;
 	}
 	
 	
