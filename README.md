@@ -1,8 +1,8 @@
 # SolrInterceptor #
 Status: *pre-alpha*<br/>
-Latest edit: 20130218
+Latest edit: 20130414
 ## Background ##
-SolrInterceptor exists inside Solr's update request process chain, in solrconfig.xml,  as illustrated:
+SolrInterceptor exists inside Solr's update request process chain, in solrconfig.xml,  as illustrated (read solrconfig.xml for details):
 
 	<updateRequestProcessorChain name="harvest" default="true">
       <processor class="solr.RunUpdateProcessorFactory"/>
@@ -16,14 +16,12 @@ The request processor chain handles documents processed by Solr. The first line 
 
 ## Installation ##
 
-The projects classes, in the /org directory, go into Solr's webapps/WEB-INF/classes directory.
+Build SolrUpdateResponseHandler.jar with build.xml.
 The following jar files are required in Solr's webapps/WEB-INF/lib directory:
-- commons-beanutils<latestversion>.jar
-- commons-collections<latestversion>.jar
-- ezmorph<latestversion>.jar
-- json-lib-2.4-jdk15.jar
+- json_simple-1.2.jar
+- SolrUpdateResponseHandler.jar
 
-Additionally, solrconfig.xml must include the modified processor chain as described above. That file is found in /collections/config/
+Additionally, solrconfig.xml must include the modified processor chain as described above. That file is installed in /collections/config/
 
 The file agents.properties must be in the Solr root directory from which Solr is booted. If Solr throws a FileNotFound exception, it is likely because it cannot find this file.
 
@@ -35,6 +33,8 @@ agents.properties includes a port assignment.
 **Please note that the port is used by all SolrAgentCoordinator installations.**
 
 ## CHANGE HISTORY ##
+20130414
+	Swapped in much simpler JSON library. Now running from jar file rather than class files
 20130218
 	Dropped creating a new DocumentProcessor object since we do not care what changed; we are using it for external, not internal purposes.  Changed DocumentProcessor to threaded. Results in improved performance, and no blocking of Solr if the listener drops off.
 

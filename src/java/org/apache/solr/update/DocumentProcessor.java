@@ -21,10 +21,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 
-import net.sf.json.JSONObject;
+//import net.sf.json.JSONObject;
+import org.json.simple.JSONObject;
 
 import org.apache.solr.common.SolrInputDocument;
-import org.apache.solr.common.SolrInputField;
+//import org.apache.solr.common.SolrInputField;
 import org.apache.solr.update.processor.UpdateRequestProcessor;
 
 /**
@@ -35,12 +36,15 @@ public class DocumentProcessor extends UpdateRequestProcessor {
 	private int thePort = 0;
 	private boolean isRunning = true;
 	private Worker thread;
+	private String agentTag;
 	/**
 	 * @param next
+	 * @param agentTag TODO
 	 */
-	public DocumentProcessor(UpdateRequestProcessor next, int port) {
+	public DocumentProcessor(UpdateRequestProcessor next, int port, String agentTag) {
 		super(next);
 		thePort = port;
+		this.agentTag = agentTag;
 		thread = new Worker();
 	}
 	
@@ -58,8 +62,8 @@ public class DocumentProcessor extends UpdateRequestProcessor {
 	 */
 	public void acceptDocument(SolrInputDocument doc) {
 		System.out.println("DocumentProcessor.acceptDocument "+doc);
-		JSONObject j = JSONObject.fromObject(toMap(doc));
-		String json= j.toString();
+		JSONObject j = new JSONObject(doc);
+		String json= agentTag+"|"+j.toJSONString();
 		System.out.println("JSON "+json);
 		serveData(json);
 	}
@@ -76,7 +80,7 @@ public class DocumentProcessor extends UpdateRequestProcessor {
 	 * Convert <code>doc</code> into a <code>Map<String,Object</code>
 	 * @param doc
 	 * @return
-	 */
+	 * /
 	Map<String,Object> toMap(SolrInputDocument doc) {
 		Map<String,Object> result = new HashMap<String,Object>();
 		Iterator<SolrInputField> itr = doc.iterator();
@@ -93,6 +97,7 @@ public class DocumentProcessor extends UpdateRequestProcessor {
 		}
 		return result;
 	}
+	*/
 	
 	protected void finalize() throws Exception {
 		thread.halt();

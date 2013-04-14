@@ -16,8 +16,8 @@
 package tests;
 import java.util.*;
 
-import net.sf.json.JSONObject;
-
+//import net.sf.json.JSONObject;
+import org.json.simple.JSONObject;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.SolrInputField;
 
@@ -51,7 +51,7 @@ public class FirstTest {
 		x.add("Hello");
 		x.add("GoodBye");
 		doc.addField("list",x);
-		JSONObject j = JSONObject.fromObject(_toMap(doc));
+		JSONObject j = new JSONObject(doc);
 		System.out.println(j.toString());
 	}
 	

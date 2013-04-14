@@ -35,6 +35,7 @@ public class TopicQuestsDocumentProcessFactory extends
 		UpdateRequestProcessorFactory {
 	private int myPort = 0;
 	private DocumentProcessor processor;
+	private final String agentTag = "NewDocument";
 	
 	/**
 	 * Called when the code in solrconfig.xml wants to send in some
@@ -65,7 +66,7 @@ public class TopicQuestsDocumentProcessFactory extends
 	public UpdateRequestProcessor getInstance(SolrQueryRequest req,
 			SolrQueryResponse resp, UpdateRequestProcessor next) {
 		if (processor == null)
-			processor = new DocumentProcessor(next,myPort);
+			processor = new DocumentProcessor(next,myPort, agentTag);
 		return processor;
 	}
 	

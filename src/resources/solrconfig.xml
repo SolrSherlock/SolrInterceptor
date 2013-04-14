@@ -295,15 +295,27 @@
     -->
   <jmx />
   
+	<updateRequestProcessorChain name="partial" default="true">
+      <processor class="solr.RunUpdateProcessorFactory"/>
+      <processor class="solr.LogUpdateProcessorFactory"/>
+    </updateRequestProcessorChain>
 
-  <!-- Custom harvesting handler for updates -->
 	<updateRequestProcessorChain name="harvest" default="true">
+      <processor class="solr.RunUpdateProcessorFactory"/>
+      <processor class="org.apache.solr.update.TopicQuestsHarvestProcessFactory">
+        <str name="inputField">hello</str>
+      </processor>
+      <processor class="solr.LogUpdateProcessorFactory"/>
+    </updateRequestProcessorChain>
+  
+	<updateRequestProcessorChain name="merge" default="true">
       <processor class="solr.RunUpdateProcessorFactory"/>
       <processor class="org.apache.solr.update.TopicQuestsDocumentProcessFactory">
         <str name="inputField">hello</str>
       </processor>
       <processor class="solr.LogUpdateProcessorFactory"/>
     </updateRequestProcessorChain>
+    
   <!-- If you want to connect to a particular server, specify the
        agentId 
     -->
@@ -330,12 +342,12 @@
                    since a document was added before automaticly
                    triggering a new commit. 
       -->
-    <!--
+    
        <autoCommit> 
          <maxDocs>10000</maxDocs>
          <maxTime>1000</maxTime> 
        </autoCommit>
-      -->
+      
 
     <!-- Update Related Event Listeners
          
@@ -368,7 +380,13 @@
          <arr name="env"> <str>MYVAR=val1</str> </arr>
        </listener>
       -->
-  </updateHandler>
+     	<!-- Enables a transaction log, currently used for real-time get.
+         "dir" - the target directory for transaction logs, defaults to the
+         solr data directory.  -->
+   		<updateLog>
+      		<str name="dir">${solr.data.dir:}</str>
+    	</updateLog> 
+      </updateHandler>
   
   <!-- IndexReaderFactory
 
@@ -877,16 +895,8 @@
     -->
   <requestHandler name="/update" 
                   class="solr.XmlUpdateRequestHandler">
-    <!-- See below for information on defining 
-         updateRequestProcessorChains that can be used by name 
-         on each Update Request
-      -->
-    <!--
-       <lst name="defaults">
-         <str name="update.chain">dedupe</str>
-       </lst>
-       -->
-    </requestHandler>
+                  
+  </requestHandler>
   <!-- Binary Update Request Handler
        http://wiki.apache.org/solr/javabin
     -->
