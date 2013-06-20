@@ -1,6 +1,6 @@
 # SolrInterceptor #
 Status: *pre-alpha*<br/>
-Latest edit: 20130414
+Latest edit: 201306.19
 ## Background ##
 SolrInterceptor exists inside Solr's update request process chain, in solrconfig.xml,  as illustrated (read solrconfig.xml for details):
 
@@ -33,6 +33,8 @@ agents.properties includes a port assignment.
 **Please note that the port is used by all SolrAgentCoordinator installations.**
 
 ## CHANGE HISTORY ##
+20130619
+	No code changes; just upgraded Solr jars
 20130414
 	Swapped in much simpler JSON library. Now running from jar file rather than class files
 20130218
