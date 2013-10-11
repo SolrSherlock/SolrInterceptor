@@ -1,6 +1,6 @@
 # SolrInterceptor #
 Status: *pre-alpha*<br/>
-Latest edit: 201306.19
+Latest edit: 20131011
 ## Background ##
 SolrInterceptor exists inside Solr's update request process chain, in solrconfig.xml,  as illustrated (read solrconfig.xml for details):
 
@@ -33,6 +33,8 @@ agents.properties includes a port assignment.
 **Please note that the port is used by all SolrAgentCoordinator installations.**
 
 ## CHANGE HISTORY ##
+20131011
+	With latest Solr versions, required to take the SolrDocument apart rather than make a JSONObject directly from it. The issue was bad JSON syntax in messages sent to the agents.
 20130619
 	No code changes; just upgraded Solr jars
 20130414

@@ -21,10 +21,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 
-//import net.sf.json.JSONObject;
 import org.json.simple.JSONObject;
 
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.SolrInputField;
 //import org.apache.solr.common.SolrInputField;
 import org.apache.solr.update.processor.UpdateRequestProcessor;
 
@@ -46,6 +46,7 @@ public class DocumentProcessor extends UpdateRequestProcessor {
 		thePort = port;
 		this.agentTag = agentTag;
 		thread = new Worker();
+		System.out.println("DocumentProcessor started "+port+" "+agentTag);
 	}
 	
 	/**
@@ -62,7 +63,17 @@ public class DocumentProcessor extends UpdateRequestProcessor {
 	 */
 	public void acceptDocument(SolrInputDocument doc) {
 		System.out.println("DocumentProcessor.acceptDocument "+doc);
-		JSONObject j = new JSONObject(doc);
+		JSONObject j = new JSONObject(); // new JSONObject(doc);
+		// we have to take apart the document
+		Iterator<SolrInputField>itr = doc.iterator();
+		String key;
+		SolrInputField field;
+		while (itr.hasNext()) {
+			field = itr.next();
+			key = field.getName();
+			j.put(key, doc.getFieldValue(key));
+		}
+		
 		String json= agentTag+"|"+j.toJSONString();
 		System.out.println("JSON "+json);
 		serveData(json);
